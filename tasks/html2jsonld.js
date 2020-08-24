@@ -53,6 +53,16 @@ module.exports = (grunt) => {
 
     return url + directory + "/" + 
                path.basename(file) + (anchor ? selector : "");
+  }  
+  
+  function getHtml(path)
+  {
+    return cheerio.load(grunt.file.read(path), {
+       withDomLvl1: true,
+       normalizeWhitespace: true,
+       xmlMode: true,
+       decodeEntities: true
+     });
   }
  
   function isSelector(string){
