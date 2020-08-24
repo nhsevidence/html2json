@@ -39,9 +39,19 @@ module.exports = (grunt) => {
     }
   }
   
-  function setPath(url, file, anchor, selector)
+  function setPath(url, rootPath, file, anchor, selector)
   {
-    return url + path.dirname(file).split("/").slice(-1)[0] + "/" + 
+    rootPath = rootPath.replace(".\\",'').replace(/\\/g,"/") + "/";
+    var segments = path.dirname(file).replace(rootPath, '').split("/");
+    var directory;
+    if(segments.length == 2) // level 2 topic
+    {
+      directory = segments[0] + "/" + segments[1]
+    } else {
+      directory = segments[0];
+    }
+
+    return url + directory + "/" + 
                path.basename(file) + (anchor ? selector : "");
   }  
   
