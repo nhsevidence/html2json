@@ -34,26 +34,29 @@ module.exports = (grunt) => {
      var body = $(options.selector);
      if(body.length > 0) {
        body = getHotLoadedContent($, body, file.orig.cwd, options.selector);
-       var json = generateJSON(setPath(options.url, file.src[0], options.anchor, options.selector), body, type);
+       var json = generateJSON(setPath(options.url, options.src, file.src[0], options.anchor, options.selector), body, type);
        writeJSON(file.dest + (options.anchor ? options.selector.replace("#", "_") : ""), json);
     }
   }
   
   function setPath(url, rootPath, file, anchor, selector)
   {
-    rootPath = rootPath.replace(".\\",'').replace(/\\/g,"/") + "/";
-    var segments = path.dirname(file).replace(rootPath, '').split("/");
-    var directory;
-    if(segments.length == 2) // level 2 topic
+    if(url && rootPath && file && selector)
     {
-      directory = segments[0] + "/" + segments[1]
+      rootPath = rootPath.replace(".\\",'').replace(/\\/g,"/") + "/";
+      var segments = path.dirname(file).replace(rootPath, '').split("/");
+      var directory = segments[0];
+      if(segments.length == 2) // level 2 topic
+      {
+        directory = segments[0] + "/" + segments[1];
+      }
+      
+      return url + directory + "/" + 
+                 path.basename(file) + (anchor ? selector : "");
     } else {
-      directory = segments[0];
+      throw Error('Required parameters were missing:' + JSON.stringify({url, rootPath, file, selector}));
     }
-
-    return url + directory + "/" + 
-               path.basename(file) + (anchor ? selector : "");
-  }  
+  }   
   
   function getHtml(path)
   {
